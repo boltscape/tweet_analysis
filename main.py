@@ -29,7 +29,7 @@ def clean_cols(dataset, cols):
         del dataset[col]
     return dataset
 
-def preprocess_tweet_text(tweet,stemlem):
+def pre_process_tweet(tweet,stemlem):
     tweet.lower()
     # Remove urls
     tweet = re.sub(r"http\S+|www\S+|https\S+", '', tweet, flags=re.MULTILINE)
@@ -45,8 +45,24 @@ def preprocess_tweet_text(tweet,stemlem):
     if stemlem == 'stem':
         ps = PorterStemmer()
         cleaned_words = [ps.stem(w) for w in filtered_words]
+    
+    #Lemmatization
     elif stemlem == 'lem':    
         lemmatizer = WordNetLemmatizer()
         cleaned_words = [lemmatizer.lemmatize(w, pos='a') for w in filtered_words]
     
     return " ".join(cleaned_words)
+
+def vectorize(train_fit):
+    vector = TfidfVectorizer(sublinear_tf=True)
+    vector.fit(train_fit)
+    return vector
+
+def sintiment_to_stringtiment(sentiment):
+    if sentiment==0:
+        return 'Negative'
+    elif sentiment==2:
+        return 'Neutral'
+    else:
+        return 'Positive'
+

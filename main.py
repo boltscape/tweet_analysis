@@ -28,3 +28,25 @@ def clean_cols(dataset, cols):
     for col in cols:
         del dataset[col]
     return dataset
+
+def preprocess_tweet_text(tweet,stemlem):
+    tweet.lower()
+    # Remove urls
+    tweet = re.sub(r"http\S+|www\S+|https\S+", '', tweet, flags=re.MULTILINE)
+    # Remove username tags and hashtags
+    tweet = re.sub(r'\@\w+|\#','', tweet)
+    # Remove punctuation
+    tweet = tweet.translate(str.maketrans('', '', string.punctuation))
+    # Remove stopwords
+    tweet_tokens = word_tokenize(tweet)
+    filtered_words = [w for w in tweet_tokens if not w in stop_words]
+    
+    #Stemming
+    if stemlem == 'stem':
+        ps = PorterStemmer()
+        cleaned_words = [ps.stem(w) for w in filtered_words]
+    elif stemlem == 'lem':    
+        lemmatizer = WordNetLemmatizer()
+        cleaned_words = [lemmatizer.lemmatize(w, pos='a') for w in filtered_words]
+    
+    return " ".join(cleaned_words)

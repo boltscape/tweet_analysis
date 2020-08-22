@@ -14,5 +14,17 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 
-# Global Parameters
+# Global Params
 stop_words = set(stopwords.words('english'))
+
+# Load tweet dataset
+def load_tweets(filename, cols):
+    dataset = pd.read_csv(filename, encoding='latin-1')
+    dataset.columns = cols
+    return dataset
+
+# Clean dataset columns
+def clean_cols(dataset, cols):
+    for col in cols:
+        del dataset[col]
+    return dataset

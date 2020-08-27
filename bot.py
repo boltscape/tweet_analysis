@@ -7,7 +7,6 @@ import time
 import schedule
 import tweepy
 
-
 def initiate_api():
     try: 
         with open('config.json', 'r') as f:
@@ -56,7 +55,7 @@ def get_tweets(api, query):
     return tweets
 
 # Fetch trending hashtags
-def get_trending_hashtags(api, location):
+def get_hashtags(api, location):
     woeids = get_woeid(api, location)
     trending_tags = set()
     for woeid in woeids:
@@ -72,3 +71,35 @@ def get_trending_hashtags(api, location):
     
     return trending_tags
 
+def twitbot(api, locations):
+    today = datetime.datetime.today().strftime("%d-%m-%Y-%s")
+    if not os.path.exists("trending_tweets"):
+        os.makedirs("trending_tweets")
+    tweets_file = open("trending_tweets/"+today+"-tweets.csv", "a+")
+    hashtags_file = open("trending_tweets/"+today+"-hashtags.csv", "w+")
+    tweesv = csv.writer(tweets_file)
+    
+    hashtags = get_hashtags(api, locations)
+    hashtags_file.write("\n".join(hashtags))
+    print("Hashtags written to file.")
+    hashtags_file.close()
+    
+    for hashtag in hashtags:
+        try:
+            print("Getting tweets with hashtag ", hashtag)
+            tweets = get_tweets(api, "#"+hashtag)
+        except:
+            print("Too many calls made to API. Try again after 1 hour.")
+            time.sleep(3605)
+            tweets = get_tweets(api, "#"+hashtag)
+        for tweet in tweets:
+            tweesv.writerow(tweet)
+    
+    tweets_file.close()
+
+def main():
+    locations = ['india'] #Add more locations as you see fit
+    #api = initiate_api()
+
+if __name__ == '__main__':
+    main()

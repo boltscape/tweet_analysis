@@ -5,7 +5,7 @@ import os
 import shutil
 import time
 
-import schedule
+# Twitter API Client
 import tweepy
 
 def initiate_api():
@@ -15,13 +15,10 @@ def initiate_api():
         auth = tweepy.OAuthHandler(config["CONSUMER_KEY"], config["CONSUMER_SECRET"])
         auth.set_access_token(config["ACCESS_KEY"], config["ACCESS_SECRET"])
         api = tweepy.API(auth)
-        #print("API connection successful")
         return api
     except:
         print("Problems with config.json")
         return None
-
-# Customzizing fetched tweets 
 
 # Filtering only english tweets
 def isEnglish(twext):
@@ -73,11 +70,10 @@ def get_hashtags(api, location):
     return trending_tags
 
 def twitbot(api, locations):
-    if os.path.exists("trending_tweets"):
-        shutil.rmtree("trending_tweets")
-        os.makedirs("trending_tweets")
-    else:
-        os.makedirs("trending_tweets")
+    #Refresh Tweets and Hashtags
+    shutil.rmtree("trending_tweets")
+    os.makedirs("trending_tweets")
+    
     tweets_file = open("trending_tweets/tweets.csv", "a+")
     hashtags_file = open("trending_tweets/hashtags.csv", "w+")
     tweesv = csv.writer(tweets_file)

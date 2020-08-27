@@ -43,14 +43,7 @@ def pre_process_tweet(tweet):
     # Remove stopwords
     tweet_tokens = word_tokenize(tweet)
     filtered_words = [w for w in tweet_tokens if not w in stop_words]
-    
-    """Stemming
-    if stemlem == 'stem':
-        ps = PorterStemmer()
-        cleaned_words = [ps.stem(w) for w in filtered_words]
-    """
-    # Lemmatization
-    #elif stemlem == 'lem':    
+    # Lemmatization  
     lemmatizer = WordNetLemmatizer()
     cleaned_words = [lemmatizer.lemmatize(w, pos='a') for w in filtered_words]
     
@@ -84,17 +77,9 @@ x = tf_vector.transform(np.array(tweetset.iloc[:, 1]).ravel())
 y = np.array(tweetset.iloc[:, 0]).ravel()
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=30)
 
-# Training Naive Bayes model
-NB_model = MultinomialNB()
-NB_model.fit(x_train, y_train)
-#y_predict_nb = NB_model.predict(x_test)
-#print(accuracy_score(y_test, y_predict_nb))
-
-# Training Logistics Regression model
+# Training Logistic Regression model
 LR_model = LogisticRegression(solver='lbfgs')
 LR_model.fit(x_train, y_train)
-#y_predict_lr = LR_model.predict(x_test)
-#print(accuracy_score(y_test, y_predict_lr))
 
 # Fetching tweets using the bot
 bot.main()

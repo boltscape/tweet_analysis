@@ -1,5 +1,5 @@
 Sentimental Analysis using Machine Learning on Twitter
 
-Fetches tweets from Twitter with the current most popular hashtags, order them by hashtag and then attempts to ascertain their polarity ranging from Negative, Neutral to Positive using the Logistic Regression.
+Fetch tweets from Twitter with the current most popular hashtags, order them by hashtag, and then attempt to ascertain their polarity (Negative, Neutral or Positive) using the Logistic Regression model.
 
-Can be used to understand public opinion on trending topics in India.
+Useful for understanding public opinion on trending topics in India.

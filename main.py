@@ -14,6 +14,9 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 
+# Twitter bot
+import bot
+
 # Global Params
 stop_words = set(stopwords.words('english'))
 
@@ -84,11 +87,34 @@ x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_
 # Training Naive Bayes model
 NB_model = MultinomialNB()
 NB_model.fit(x_train, y_train)
-y_predict_nb = NB_model.predict(x_test)
-print(accuracy_score(y_test, y_predict_nb))
+#y_predict_nb = NB_model.predict(x_test)
+#print(accuracy_score(y_test, y_predict_nb))
 
 # Training Logistics Regression model
 LR_model = LogisticRegression(solver='lbfgs')
 LR_model.fit(x_train, y_train)
-y_predict_lr = LR_model.predict(x_test)
-print(accuracy_score(y_test, y_predict_lr))
+#y_predict_lr = LR_model.predict(x_test)
+#print(accuracy_score(y_test, y_predict_lr))
+
+# Fetching tweets using the bot
+bot.main()
+
+# Opening the tweets fetched by the bot
+test_file_name = "trending_tweets/tweets.csv"
+test_ds = load_tweets(test_file_name, ["t_id", "hashtag", "created_at", "user", "text"])
+test_ds = clean_cols(test_ds, ["t_id", "created_at", "user"])
+
+# Creating text feature
+test_ds.text = test_ds["text"].apply(pre_process_tweet)
+test_feature = tf_vector.transform(np.array(test_ds.iloc[:, 1]).ravel())
+
+# Using Logistic Regression model for prediction
+test_prediction_lr = LR_model.predict(test_feature)
+
+# Averaging out the hashtags result
+test_result_ds = pd.DataFrame({'hashtag': test_ds.hashtag, 'prediction':test_prediction_lr})
+test_result = test_result_ds.groupby(['hashtag']).max().reset_index()
+test_result.columns = ['hashtag', 'predictions']
+test_result.predictions = test_result['predictions'].apply(sintiment_to_stringtiment)
+
+print(test_result)

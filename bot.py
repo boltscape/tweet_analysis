@@ -2,6 +2,7 @@ import csv
 import datetime
 import json
 import os
+import shutil
 import time
 
 import schedule
@@ -72,11 +73,13 @@ def get_hashtags(api, location):
     return trending_tags
 
 def twitbot(api, locations):
-    today = datetime.datetime.today().strftime("%d-%m-%Y-%s")
-    if not os.path.exists("trending_tweets"):
+    if os.path.exists("trending_tweets"):
+        shutil.rmtree("trending_tweets")
         os.makedirs("trending_tweets")
-    tweets_file = open("trending_tweets/"+today+"-tweets.csv", "a+")
-    hashtags_file = open("trending_tweets/"+today+"-hashtags.csv", "w+")
+    else:
+        os.makedirs("trending_tweets")
+    tweets_file = open("trending_tweets/tweets.csv", "a+")
+    hashtags_file = open("trending_tweets/hashtags.csv", "w+")
     tweesv = csv.writer(tweets_file)
     
     hashtags = get_hashtags(api, locations)
@@ -99,7 +102,8 @@ def twitbot(api, locations):
 
 def main():
     locations = ['india'] #Add more locations as you see fit
-    #api = initiate_api()
+    api = initiate_api()
+    twitbot(api, locations)
 
 if __name__ == '__main__':
     main()
